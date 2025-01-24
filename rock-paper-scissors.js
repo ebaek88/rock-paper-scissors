@@ -24,12 +24,13 @@ function playRound(humanChoice, computerChoice) {
   // gets the index of rock, paper, and scissors in the array choices
   const humanChoiceIndex = choices.indexOf(humanChoice);
   const computerChoiceIndex = choices.indexOf(computerChoice);
-  const indexDifference = humanChoiceIndex - computerChoiceIndex;
+  let indexDifference = humanChoiceIndex - computerChoiceIndex;
 
   // if the human's choice is other than "rock", "paper", or "scissors", the index would be -1
   if (humanChoiceIndex === -1) {
     console.log("You chose other than \'rock\', \'paper\', or \'scissors\'. The game cannot be proceeded.");
-    return;
+    indexDifference = -999;
+    return indexDifference;
   }
   
   switch (indexDifference) {
@@ -41,23 +42,52 @@ function playRound(humanChoice, computerChoice) {
     case 1:
     case -2:
       console.log(`You win! ${humanChoice} beats ${computerChoice}!`);
-      humanScore++;
+      // humanScore++;
       break;
     // everything else(0 or -1), a computer's win
     default:
       console.log(`You lose! ${computerChoice} beats ${humanChoice}!`);
-      computerScore++;
+      // computerScore++;
       break;
   }
 
-  console.log(`Score for player: ${humanScore}`);
-  console.log(`Score for computer: ${computerScore}`);
+  return indexDifference;
 }
 
-let computerChoice = getComputerChoice();
-console.log("The computer chose: " + computerChoice);
+// function that plays the entire game. five rounds are played.
+function playGame() {
+  const maximumGamePlayable = 5;
+  let gamesPlayed = 0;
+  // let continuePlay = confirm("Do you want to play rock-paper-scissors?");
 
-let humanChoice = getHumanChoice();
-console.log("You chose: " + humanChoice);
+  while(gamesPlayed < maximumGamePlayable && confirm("Do you want to play rock-paper-scissors?")) {
+    const computerChoice = getComputerChoice();
+    const humanChoice = getHumanChoice();
+    console.log("You chose: " + humanChoice);
+    
+    // separated the game logic and the UI by moving the scoring to the UI
+    const result = playRound(humanChoice, computerChoice);
+    
+    if (result === 1 || result === -2) {
+      humanScore++;
+    }
 
-playRound(humanChoice, computerChoice);
+    if (result === -1 || result === 2) {
+      computerScore++;
+    }
+
+    console.log(`Score for player: ${humanScore}`);
+    console.log(`Score for computer: ${computerScore}`);
+    console.log(`Games played: ${++gamesPlayed}`);
+  }
+
+  console.log(`Total score for player: ${humanScore}`);
+  console.log(`Total score for computer: ${computerScore}`);
+  console.log(`${(humanScore - computerScore > 0) ? "You won!" : (humanScore === computerScore ? "Draw!" : "You lost!" )}`);
+  console.log("Thank you for visiting us😇.");
+
+}
+
+playGame();
+
+
