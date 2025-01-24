@@ -8,5 +8,15 @@ function getComputerChoice() {
   return choices[ Math.floor( Math.random() * 3 ) ];
 }
 
+// function that allows the player to choose rock, paper, or scissors
+function getHumanChoice() {
+  let enteredString = prompt("Please choose rock, paper, or scissors: ");
+  let humanChoice = enteredString.toLowerCase();  // "sanitized" the input by making the string lowercase
+  return humanChoice;
+}
+
 let computerChoice = getComputerChoice();
 console.log("The computer chose: " + computerChoice);
+
+let humanChoice = getHumanChoice();
+console.log("You chose: " + humanChoice);
