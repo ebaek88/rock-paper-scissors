@@ -19,6 +19,23 @@ function getHumanChoice() {
   return humanChoice;
 }
 
+// "sleep" effect: holding the process for specified ms
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// "animation" effect: prints out "Let's Go!!!", "rock", "paper", "scissors" by one second
+async function countdown(arr) {
+  console.log("Let's Go!!!");
+  await sleep(1000);
+  for(elem of arr) {
+    console.log(elem);
+    await sleep(1000);
+  }
+
+  return new Promise(resolve => resolve("Hey!"));
+}
+
 // function that plays a single round of rock paper scissors game
 function playRound(humanChoice, computerChoice) {
   // gets the index of rock, paper, and scissors in the array choices
@@ -55,7 +72,7 @@ function playRound(humanChoice, computerChoice) {
 }
 
 // function that plays the entire game. five rounds are played.
-function playGame() {
+async function playGame() {
   const maximumGamePlayable = 5;
   let gamesPlayed = 0;
   // let continuePlay = confirm("Do you want to play rock-paper-scissors?");
@@ -64,6 +81,10 @@ function playGame() {
     const computerChoice = getComputerChoice();
     const humanChoice = getHumanChoice();
     console.log("You chose: " + humanChoice);
+
+    // calling the "animation" function
+    let promiseResult = await countdown(choices);
+    console.log(promiseResult);
     
     // separated the game logic and the UI by moving the scoring to the UI
     const result = playRound(humanChoice, computerChoice);
