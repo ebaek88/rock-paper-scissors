@@ -3,9 +3,11 @@ console.log("Welcome to the Rock-Paper-Scissors Game!");
 // the three choices that can be made both by the player or the computer
 const choices = ["rock", "paper", "scissors"];
 
-// the variables to keep track of the scores both for the player and the computer
+// the variables to keep track of the game status
 let humanScore = 0;
 let computerScore = 0;
+const maximumGamePlayable = 5;
+let gamesPlayed = 0;
 
 // function that randomly returns rock, paper, or scissors for the computer
 function getComputerChoice() {
@@ -71,13 +73,43 @@ function playRound(humanChoice, computerChoice) {
   return indexDifference;
 }
 
+// function that renders the game status
+function render() {
+  const gameStatusContainer = document.querySelector(".status");
+  let gamesPlayedElement;
+  let humanScoreElement;
+  let computerScoreElement;
+
+  if ( gamesPlayed === 0 ) {
+    gamesPlayedElement = document.createElement("h3");
+    gamesPlayedElement.setAttribute("id", "games-played")
+    humanScoreElement = document.createElement("h3");
+    humanScoreElement.setAttribute("id", "human-score");
+    computerScoreElement = document.createElement("h3");
+    computerScoreElement.setAttribute("id", "computer-score");
+    gameStatusContainer.appendChild(gamesPlayedElement);
+    gameStatusContainer.appendChild(humanScoreElement);
+    gameStatusContainer.appendChild(computerScoreElement);
+  } else {
+    gamesPlayedElement = document.querySelector(".status #games-played");
+    humanScoreElement = document.querySelector(".status #human-score");
+    computerScoreElement = document.querySelector(".status #computer-score");
+  }
+
+
+
+  gamesPlayedElement.textContent = `Games played: ${gamesPlayed}`;
+  humanScoreElement.textContent = `Score for player: ${humanScore}`;
+  computerScoreElement.textContent = `Score for computer: ${computerScore}`;
+}
+
 // function that plays the entire game. five rounds are played.
 async function playGame() {
-  const maximumGamePlayable = 5;
-  let gamesPlayed = 0;
   // let continuePlay = confirm("Do you want to play rock-paper-scissors?");
+  
+  while(humanScore < 5 && computerScore < 5 && confirm("Do you want to play rock-paper-scissors?")) {
+    render();
 
-  while(gamesPlayed < maximumGamePlayable && confirm("Do you want to play rock-paper-scissors?")) {
     const computerChoice = getComputerChoice();
     const humanChoice = getHumanChoice();
     console.log("You chose: " + humanChoice);
@@ -97,9 +129,9 @@ async function playGame() {
       computerScore++;
     }
 
-    console.log(`Score for player: ${humanScore}`);
-    console.log(`Score for computer: ${computerScore}`);
-    console.log(`Games played: ${++gamesPlayed}`);
+    gamesPlayed++;
+
+    render();
   }
 
   console.log(`Total score for player: ${humanScore}`);
