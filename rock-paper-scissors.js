@@ -8,6 +8,7 @@ let humanScore = 0;
 let computerScore = 0;
 const maximumGamePlayable = 5;
 let gamesPlayed = 0;
+let continuePlay;
 
 // function that randomly returns rock, paper, or scissors for the computer
 function getComputerChoice() {
@@ -15,10 +16,19 @@ function getComputerChoice() {
 }
 
 // function that allows the player to choose rock, paper, or scissors
-function getHumanChoice() {
-  let enteredString = prompt("Please choose rock, paper, or scissors: ");
-  let humanChoice = enteredString.toLowerCase();  // "sanitized" the input by making the string lowercase
-  return humanChoice;
+async function getHumanChoice() {
+  // let enteredString = prompt("Please choose rock, paper, or scissors: ");
+  // let humanChoice = enteredString.toLowerCase();  // "sanitized" the input by making the string lowercase
+  const buttonContainer = document.querySelector(".choices");
+  const result = await holdUntilClick(buttonContainer);
+  return result;
+}
+
+async function holdUntilClick(buttonContainer) {
+  buttonContainer.addEventListener("click", (evt) => {
+    let target = evt.target;
+    return target.id;
+  });
 }
 
 // "sleep" effect: holding the process for specified ms
@@ -74,51 +84,58 @@ function playRound(humanChoice, computerChoice) {
 }
 
 // function that renders the game status
-function render() {
+function renderStatus() {
   const gameStatusContainer = document.querySelector(".status");
   let gamesPlayedElement;
   let humanScoreElement;
   let computerScoreElement;
+  let finalResultElement;
 
   if ( gamesPlayed === 0 ) {
-    gamesPlayedElement = document.createElement("h3");
-    gamesPlayedElement.setAttribute("id", "games-played")
-    humanScoreElement = document.createElement("h3");
-    humanScoreElement.setAttribute("id", "human-score");
-    computerScoreElement = document.createElement("h3");
-    computerScoreElement.setAttribute("id", "computer-score");
-    gameStatusContainer.appendChild(gamesPlayedElement);
-    gameStatusContainer.appendChild(humanScoreElement);
-    gameStatusContainer.appendChild(computerScoreElement);
+    gamesPlayedElement = renderTextElement(gameStatusContainer, "games-played");
+    humanScoreElement = renderTextElement(gameStatusContainer, "human-score");
+    computerScoreElement = renderTextElement(gameStatusContainer, "computer-score");
   } else {
     gamesPlayedElement = document.querySelector(".status #games-played");
     humanScoreElement = document.querySelector(".status #human-score");
     computerScoreElement = document.querySelector(".status #computer-score");
   }
 
-
-
   gamesPlayedElement.textContent = `Games played: ${gamesPlayed}`;
   humanScoreElement.textContent = `Score for player: ${humanScore}`;
   computerScoreElement.textContent = `Score for computer: ${computerScore}`;
+
+  if (!continuePlay) {
+    finalResultElement = renderTextElement(gameStatusContainer, "final-result");
+    finalResultElement.textContent = `${(humanScore - computerScore > 0) ? "You won!" : (humanScore === computerScore ? "Draw!" : "You lost!" )} `;
+    finalResultElement.textContent += "Thank you for visiting us😇.";
+  }
+
+}
+
+// render text elements with "id=idName" and append it to parentElement
+function renderTextElement(parentElement, idName) {
+  const element = document.createElement("h3");
+  element.setAttribute("id", `${idName}`);
+  parentElement.appendChild(element);
+  return element;
 }
 
 // function that plays the entire game. five rounds are played.
 async function playGame() {
-  // let continuePlay = confirm("Do you want to play rock-paper-scissors?");
   
-  while(humanScore < 5 && computerScore < 5 && confirm("Do you want to play rock-paper-scissors?")) {
-    render();
+  while(humanScore < 5 && computerScore < 5 && (continuePlay = confirm("Do you want to play rock-paper-scissors?"))) {
+    renderStatus();
 
     const computerChoice = getComputerChoice();
-    const humanChoice = getHumanChoice();
+    const humanChoice = await getHumanChoice();
     console.log("You chose: " + humanChoice);
 
     // calling the "animation" function
     let promiseResult = await countdown(choices);
     console.log(promiseResult);
     
-    // separated the game logic and the UI by moving the scoring to the UI
+    // separated the game logic and the UI by moving the score tracking to the UI
     const result = playRound(humanChoice, computerChoice);
     
     if (result === 1 || result === -2) {
@@ -131,13 +148,9 @@ async function playGame() {
 
     gamesPlayed++;
 
-    render();
   }
 
-  console.log(`Total score for player: ${humanScore}`);
-  console.log(`Total score for computer: ${computerScore}`);
-  console.log(`${(humanScore - computerScore > 0) ? "You won!" : (humanScore === computerScore ? "Draw!" : "You lost!" )}`);
-  console.log("Thank you for visiting us😇.");
+  renderStatus();
 
 }
 
