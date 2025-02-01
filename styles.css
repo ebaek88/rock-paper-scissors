@@ -1,4 +1,8 @@
+/* Roboto and Roboto Mono from Google are used for this program */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
 * {
+  font-family: "Roboto Mono", "Roboto", sans-serif;
   box-sizing: border-box;
 }
 
@@ -11,8 +15,16 @@ h1 {
   text-align: center;
 }
 
-.choices {
+body > * {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+}
+
+.choices {
+  justify-content: space-between;
+}
+
+.status {
+  flex-direction: column;
 }
